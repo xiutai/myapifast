@@ -28,12 +28,9 @@ class From_data(BaseModel):
     password:str
 
 
-class Userid(BaseModel):
-    id: int
 
-class Usercap(BaseModel):
-    id: int
-    cap: str
+
+
 
 def test(username):
     # username=username.replace("'","")
@@ -108,6 +105,9 @@ async def login(current_user: hash.User = hash.Depends(hash.get_current_active_u
 
 
 #修改状态
+class Userstatus(BaseModel):
+    id: int
+    status: int
 @app.post("/user/update")
 def user_update(id:int,status:int,current_user: hash.User = hash.Depends(hash.get_current_active_user)):
     if fsql in id:
@@ -119,6 +119,8 @@ def user_update(id:int,status:int,current_user: hash.User = hash.Depends(hash.ge
     return 'ok'
 
 #删除用户
+class Userid(BaseModel):
+    id: int
 @app.post("/user/delete")
 def user_delete(id:Userid, current_user: hash.User = hash.Depends(hash.get_current_active_user)):
     sql="DELETE FROM `user` where id = %d"%(id.id)
@@ -126,6 +128,9 @@ def user_delete(id:Userid, current_user: hash.User = hash.Depends(hash.get_curre
     return 'ok'
 
 #修改验证码
+class Usercap(BaseModel):
+    id: int
+    cap: str
 @app.post("/user/cap")
 def user_cap(data:Usercap):
     if fsql in id:
