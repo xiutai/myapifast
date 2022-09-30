@@ -89,10 +89,13 @@ async def login_for_access_token(data:From_data):
     return {"access_token": access_token, "token_type": "bearer"}
 
 #管理员修改密码
+class Adminrpwd(BaseModel):
+    id: int
+    pwd: str
 @app.post("/admin/rpwd")
-def admin_rpwd(id:int,pwd:str,current_user: hash.User = hash.Depends(hash.get_current_active_user)):
-    n_pwd=hash.get_password_hash(pwd)
-    sql="UPDATE `admin` SET `hashed_password`='%s' where id =%d;"%(n_pwd,id)
+def admin_rpwd(data:Adminrpwd,current_user: hash.User = hash.Depends(hash.get_current_active_user)):
+    n_pwd=hash.get_password_hash(data.pwd)
+    sql="UPDATE `admin` SET `hashed_password`='%s' where id =%d;"%(n_pwd,data.id)
     mysql.update(sql)
     return 'ok'
 
@@ -109,12 +112,8 @@ class Userstatus(BaseModel):
     id: int
     status: int
 @app.post("/user/update")
-def user_update(id:int,status:int,current_user: hash.User = hash.Depends(hash.get_current_active_user)):
-    if fsql in id:
-        raise hash.HTTPException(status_code=404, detail="nothing")
-    if fsql in status:
-        raise hash.HTTPException(status_code=404, detail="nothing")
-    sql="UPDATE `user` SET `status`=%d where id =%d;"%(status,id)
+def user_update(data,current_user: hash.User = hash.Depends(hash.get_current_active_user)):
+    sql="UPDATE `user` SET `status`=%d where id =%d;"%(data.status,data.id)
     mysql.update(sql)
     return 'ok'
 
@@ -133,8 +132,6 @@ class Usercap(BaseModel):
     cap: str
 @app.post("/user/cap")
 def user_cap(data:Usercap):
-    if fsql in id:
-        raise hash.HTTPException(status_code=404, detail="nothing")
     if fsql in data.cap:
         raise hash.HTTPException(status_code=404, detail="nothing")
     sql="update user set cap='%s' where id=%d"%(data.cap,data.id)
@@ -151,6 +148,6 @@ def user_insert(data:User):
 
 #查询状态
 @app.post("/user/status")
-def user_status(id:Userid):
-    sql="select status from user where id=%d"%(id.id)
+def user_status(data:Userid):
+    sql="select status from user where id=%d"%(data.id)
     return mysql.res_data(sql)
