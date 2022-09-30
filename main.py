@@ -146,8 +146,6 @@ def user_insert(data:User):
 
 #查询状态
 @app.post("/user/status")
-def user_status(id:int):
-    if fsql in id:
-        raise hash.HTTPException(status_code=404, detail="nothing")
-    sql="select status from user where id="+id
+def user_status(id:Userid):
+    sql="select status from user where id=%d"%(id.id)
     return mysql.res_data(sql)
