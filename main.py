@@ -112,7 +112,7 @@ class Userstatus(BaseModel):
     id: int
     status: int
 @app.post("/user/update")
-def user_update(data,current_user: hash.User = hash.Depends(hash.get_current_active_user)):
+def user_update(data:Userstatus,current_user: hash.User = hash.Depends(hash.get_current_active_user)):
     sql="UPDATE `user` SET `status`=%d where id =%d;"%(data.status,data.id)
     mysql.update(sql)
     return 'ok'
