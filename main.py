@@ -20,6 +20,7 @@ class User(BaseModel):
     pwd: str
     cap: Union[str, None] = None
     ip: str
+    comefrom: str
     status:int
 
 
