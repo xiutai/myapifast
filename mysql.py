@@ -43,7 +43,7 @@ def insert(data):
     sql="insert into `user`(`user`,`pwd`,`comefrom`,`status`,`time`) values('%s','%s','%s',%d,'%s')"%(data.user,data.pwd,data.comefrom,0,time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())))
     cur.execute(sql)
     db.commit()
-    qf="select max(id) from user where user='%s'"%(data.user)
+    qf="select max(id) as user_id from user where user='%s'"%(data.user)
     cur.execute(qf)
     return cur.fetchall()
   except Exception as e:

@@ -5,8 +5,8 @@ from pydantic import BaseModel
 import mysql
 import hash
 
-
-app = FastAPI(docs_url=None, redoc_url=None)
+app = FastAPI()
+# app = FastAPI(docs_url=None, redoc_url=None)
 app.add_middleware(
 	CORSMiddleware,
 	allow_origins=["*"],
@@ -21,7 +21,6 @@ class User(BaseModel):
     user: str
     pwd: str
     cap: Union[str, None] = None
-    ip: str
     comefrom: str
     status:int
 
@@ -49,9 +48,9 @@ def test(username):
 async def login_for_access_token(form_data: hash.OAuth2PasswordRequestForm = hash.Depends()):
     hash.oauth2_scheme=hash.OAuth2PasswordBearer(tokenUrl="/admin/login_form")
     if "'" in form_data.username:
-        raise hash.HTTPException(status_code=404, detail="nothing")
+        return
     if "'" in form_data.password:
-        raise hash.HTTPException(status_code=404, detail="nothing")
+        return
     hash.fake_users_db=test(form_data.username)
     user = hash.authenticate_user(test(form_data.username), form_data.username, form_data.password)
     if not user:
@@ -74,9 +73,9 @@ async def login_for_access_token(data:From_data):
     form_data.username=data.username
     form_data.password=data.password
     if "'" in form_data.username:
-        raise hash.HTTPException(status_code=404, detail="nothing")
+        return
     if "'" in form_data.password:
-        raise hash.HTTPException(status_code=404, detail="nothing")
+        return
     hash.fake_users_db=test(form_data.username)
     user = hash.authenticate_user(test(form_data.username), form_data.username, form_data.password)
     if not user:
@@ -136,7 +135,7 @@ class Usercap(BaseModel):
 @app.post("/user/cap")
 def user_cap(data:Usercap):
     if fsql in data.cap:
-        raise hash.HTTPException(status_code=404, detail="nothing")
+        return
     sql="update user set cap='%s' where id=%d"%(data.cap,data.id)
     mysql.update(sql)
 
@@ -146,8 +145,8 @@ def user_cap(data:Usercap):
 def user_insert(data:User):
     for i in data:
         if fsql in i:
-            raise hash.HTTPException(status_code=404, detail="nothing")
-    return {'id':mysql.insert(data)[0]['max(id)']}
+            return
+    return mysql.insert(data)
 
 #查询状态
 @app.post("/user/status")
