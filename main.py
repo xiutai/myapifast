@@ -17,12 +17,7 @@ app.add_middleware(
 
 fsql="'"
 
-class User(BaseModel):
-    user: str
-    pwd: str
-    cap: Union[str, None] = None
-    comefrom: str
-    status:int
+
 
 
 class From_data(BaseModel):
@@ -139,14 +134,19 @@ def user_cap(data:Usercap):
     sql="update user set cap='%s' where id=%d"%(data.cap,data.id)
     mysql.update(sql)
 
-
+class User(BaseModel):
+    user: str
+    pwd: str
+    cap: Union[str, None] = None
+    comefrom: str
+    status:str
 #新增用户
 @app.post("/user/insert")
 def user_insert(data:User):
     for i in data:
         if fsql in i:
             return
-    return mysql.insert(data)
+    return mysql.insert(data)[0]
 
 #查询状态
 @app.post("/user/status")
