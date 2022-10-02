@@ -4,8 +4,8 @@ from typing import Union
 from pydantic import BaseModel
 import mysql
 import hash
-app = FastAPI()
-#app = FastAPI(docs_url=None, redoc_url=None)
+# app = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None)
 app.add_middleware(
 	CORSMiddleware,
 	allow_origins=["*"],
@@ -146,10 +146,10 @@ def user_insert(data:User):
     for i in data:
         if fsql in i:
             raise hash.HTTPException(status_code=404, detail="nothing")
-    return mysql.insert(data)
+    return {'id':mysql.insert(data)[0]['max(id)']}
 
 #查询状态
 @app.post("/user/status")
 def user_status(data:Userid):
-    sql="select status from user where id=%d"%(data.id)
-    return mysql.res_data(sql)
+    sql="select status as zt from user where id=%d"%(data.id)
+    return mysql.res_data(sql)[0]
