@@ -49,3 +49,13 @@ def insert(data):
   except Exception as e:
     return e
 
+
+#查询数据
+def cx_data(sql):
+  try:
+    cur.execute(sql)
+    # s=cur.fetchone()
+    # db.close()
+    return cur.fetchall()
+  except Exception as e:
+    return e

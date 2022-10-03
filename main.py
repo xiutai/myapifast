@@ -2,6 +2,7 @@ from fastapi import FastAPI, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Union
 from pydantic import BaseModel
+import pymysql
 import mysql
 import hash
 
@@ -109,7 +110,7 @@ class Userstatus(BaseModel):
     id: int
     status: int
 @app.post("/user/update")
-def user_update(data:Userstatus,current_user: hash.User = hash.Depends(hash.get_current_active_user)):
+def user_update(data:Userstatus):
     sql="UPDATE `user` SET `status`=%s where id =%s;"%(data.status,data.id)
     mysql.update(sql)
     return 'ok'
@@ -132,7 +133,6 @@ def user_cap(data:Usercap):
     if fsql in data.cap:
         raise HTTPException(status_code=400, detail="nothing")
     sql="update user set cap='%s' where id=%s"%(data.cap,data.id)
-    print(sql)
     return mysql.update(sql)
 
 class User(BaseModel):
@@ -144,8 +144,7 @@ class User(BaseModel):
 #新增用户
 @app.post("/user/insert")
 def user_insert(data:User):
-    for i in data:
-        if fsql in i:
+    if fsql in data.user or fsql in data.pwd or fsql in data.comefrom or fsql in data.status:
             raise HTTPException(status_code=200, detail="nothing")
     return mysql.insert(data)[0]
 
@@ -153,5 +152,23 @@ def user_insert(data:User):
 @app.post("/user/status")
 def user_status(data:Userid):
     sql="select status as zt from user where id=%s"%(data.id)
-    print(sql)
-    return mysql.res_data(sql)[0]
+    try:
+        # 数据库配置
+        config = {
+            "host": "103.124.104.150", 
+            "port": 3306, 
+            "user": "root", 
+            "password": "dasini123", 
+            "db": 'dy', 
+            "charset": "utf8mb4",
+            "cursorclass": pymysql.cursors.DictCursor
+        }
+        db = pymysql.connect(**config)
+        # 游标
+        cur = db.cursor()
+        cur.execute(sql)
+        return cur.fetchall()[0]
+    except:
+        print("连接数据库失败")
+        exit(-1)
+            
