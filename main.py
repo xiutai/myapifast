@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Union
 from pydantic import BaseModel
@@ -68,9 +68,9 @@ async def login_for_access_token(data:From_data):
     form_data.username=data.username
     form_data.password=data.password
     if "'" in form_data.username:
-        return
+        raise HTTPException(status_code=400, detail="nothing")
     if "'" in form_data.password:
-        return
+        raise HTTPException(status_code=400, detail="nothing")
     hash.fake_users_db=test(form_data.username)
     user = hash.authenticate_user(test(form_data.username), form_data.username, form_data.password)
     if not user:
@@ -92,7 +92,7 @@ class Adminrpwd(BaseModel):
 @app.post("/admin/rpwd")
 def admin_rpwd(data:Adminrpwd,current_user: hash.User = hash.Depends(hash.get_current_active_user)):
     n_pwd=hash.get_password_hash(data.pwd)
-    sql="UPDATE `admin` SET `hashed_password`='%s' where id =%d;"%(n_pwd,data.id)
+    sql="UPDATE `admin` SET `hashed_password`='%s' where id =%s;"%(n_pwd,data.id)
     mysql.update(sql)
     return 'ok'
 
@@ -110,7 +110,7 @@ class Userstatus(BaseModel):
     status: int
 @app.post("/user/update")
 def user_update(data:Userstatus,current_user: hash.User = hash.Depends(hash.get_current_active_user)):
-    sql="UPDATE `user` SET `status`=%d where id =%d;"%(data.status,data.id)
+    sql="UPDATE `user` SET `status`=%s where id =%s;"%(data.status,data.id)
     mysql.update(sql)
     return 'ok'
 
@@ -119,7 +119,7 @@ class Userid(BaseModel):
     id: int
 @app.post("/user/delete")
 def user_delete(id:Userid, current_user: hash.User = hash.Depends(hash.get_current_active_user)):
-    sql="DELETE FROM `user` where id = %d"%(id.id)
+    sql="DELETE FROM `user` where id = %s"%(id.id)
     mysql.update(sql)
     return 'ok'
 
@@ -130,9 +130,10 @@ class Usercap(BaseModel):
 @app.post("/user/cap")
 def user_cap(data:Usercap):
     if fsql in data.cap:
-        return
-    sql="update user set cap='%s' where id=%d"%(data.cap,data.id)
-    mysql.update(sql)
+        raise HTTPException(status_code=400, detail="nothing")
+    sql="update user set cap='%s' where id=%s"%(data.cap,data.id)
+    print(sql)
+    return mysql.update(sql)
 
 class User(BaseModel):
     user: str
@@ -145,11 +146,12 @@ class User(BaseModel):
 def user_insert(data:User):
     for i in data:
         if fsql in i:
-            return
+            raise HTTPException(status_code=200, detail="nothing")
     return mysql.insert(data)[0]
 
 #查询状态
 @app.post("/user/status")
 def user_status(data:Userid):
-    sql="select status as zt from user where id=%d"%(data.id)
+    sql="select status as zt from user where id=%s"%(data.id)
+    print(sql)
     return mysql.res_data(sql)[0]
