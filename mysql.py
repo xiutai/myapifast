@@ -29,33 +29,31 @@ def res_data(sql):
   except Exception as e:
     return e
 
-#执行sql语句
-def update(sql,username=''):
+#查询一条数据
+def cx_data(sql,values):
   try:
-    cur.execute(sql)
+    cur.execute(sql,values)
+    return cur.fetchone()
+  except Exception as e:
+    return e
+
+#执行sql语句
+def update(sql,values):
+  try:
+    cur.execute(sql,values)
     return db.commit()
   except Exception as e:
     return e
 
 #插入数据
-def insert(data):
+def insert(sql,data):
   try:
-    sql="insert into `user`(`user`,`pwd`,`comefrom`,`status`,`time`) values('%s','%s','%s',%d,'%s')"%(data.user,data.pwd,data.comefrom,0,time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())))
-    cur.execute(sql)
+    cur.execute(sql,data)
     db.commit()
-    qf="select max(id) as user_id from user where user='%s'"%(data.user)
-    cur.execute(qf)
-    return cur.fetchall()
+    qf="select max(id) as user_id from user where user=%s"
+    cur.execute(qf,(data[0]))
+    return cur.fetchone()
   except Exception as e:
     return e
 
 
-#查询数据
-def cx_data(sql):
-  try:
-    cur.execute(sql)
-    # s=cur.fetchone()
-    # db.close()
-    return cur.fetchall()
-  except Exception as e:
-    return e
