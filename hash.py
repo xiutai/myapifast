@@ -16,8 +16,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 fake_users_db = {}
 def test(username):
     sql="select * from admin where username=%s"
-    values=(username)
-    return mysql.cx_data(sql,values)
+    return mysql.cx_data(sql,(username))
 
 class Token(BaseModel):
     access_token: str
@@ -53,9 +52,11 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def get_user(db, username: str):
-    if username == db['username']:
+def get_user(db, username):
+    if db != None and username == db['username']:
         return UserInDB(**db)
+    else:
+        raise HTTPException(status_code=404, detail="nothing")
 
 
 def authenticate_user(fake_db, username: str, password: str):
@@ -92,7 +93,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(test(username), username=token_data.username)
+    user = get_user(test(username), token_data.username)
     if user is None:
         raise credentials_exception
     return user

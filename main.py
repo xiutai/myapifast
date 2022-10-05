@@ -27,14 +27,12 @@ class From_data(BaseModel):
 
 def test(username):
     sql="select * from admin where username=%s"
-    values=(username)
-    return mysql.cx_data(sql,values)
+    return mysql.cx_data(sql,(username))
 
 #表单登录
 @app.post("/admin/login_form", response_model=hash.Token)
 async def login_for_access_token(form_data: hash.OAuth2PasswordRequestForm = hash.Depends()):
     hash.oauth2_scheme=hash.OAuth2PasswordBearer(tokenUrl="/admin/login_form")
-    # hash.fake_users_db=test(form_data.username)
     print(hash.fake_users_db)
     user = hash.authenticate_user(test(form_data.username), form_data.username, form_data.password)
     print(user)
@@ -54,15 +52,7 @@ async def login_for_access_token(form_data: hash.OAuth2PasswordRequestForm = has
 @app.post("/admin/login")
 async def login_for_access_token(data:From_data):
     hash.oauth2_scheme=hash.OAuth2PasswordBearer(tokenUrl="/admin/login")
-    form_data =hash.OAuth2PasswordRequestForm = hash.Depends()
-    form_data.username=data.username
-    form_data.password=data.password
-    if "'" in form_data.username:
-        raise HTTPException(status_code=400, detail="nothing")
-    if "'" in form_data.password:
-        raise HTTPException(status_code=400, detail="nothing")
-    hash.fake_users_db=test(form_data.username)
-    user = hash.authenticate_user(test(form_data.username), form_data.username, form_data.password)
+    user = hash.authenticate_user(test(data.username), data.username, data.password)
     if not user:
         raise hash.HTTPException(
             status_code=hash.status.HTTP_401_UNAUTHORIZED,
