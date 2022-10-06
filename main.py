@@ -7,8 +7,8 @@ import mysql
 import hash
 import time
 
-app = FastAPI()
-# app = FastAPI(docs_url=None, redoc_url=None)
+#app = FastAPI()
+ app = FastAPI(docs_url=None, redoc_url=None)
 app.add_middleware(
 	CORSMiddleware,
 	allow_origins=["*"],
