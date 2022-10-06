@@ -24,6 +24,8 @@ except:
 #查询数据
 def res_data(sql):
   try:
+    db = pymysql.connect(**config)
+    cur = db.cursor()
     cur.execute(sql)
     jg = cur.fetchall()
     db.close()
@@ -34,6 +36,8 @@ def res_data(sql):
 #查询一条数据
 def cx_data(sql,values):
   try:
+    db = pymysql.connect(**config)
+    cur = db.cursor()
     cur.execute(sql,values)
     jg = cur.fetchone()
     db.close()
@@ -44,6 +48,8 @@ def cx_data(sql,values):
 #执行sql语句
 def update(sql,values):
   try:
+    db = pymysql.connect(**config)
+    cur = db.cursor()
     cur.execute(sql,values)
     db.commit()
     db.close()
@@ -54,6 +60,8 @@ def update(sql,values):
 #插入数据
 def insert(sql,data):
   try:
+    db = pymysql.connect(**config)
+    cur = db.cursor()
     cur.execute(sql,data)
     db.commit()
     qf="select max(id) as user_id from user where user=%s"
