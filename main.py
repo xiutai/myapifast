@@ -8,7 +8,7 @@ import hash
 import time
 
 #app = FastAPI()
- app = FastAPI(docs_url=None, redoc_url=None)
+app = FastAPI(docs_url=None, redoc_url=None)
 app.add_middleware(
 	CORSMiddleware,
 	allow_origins=["*"],
@@ -16,10 +16,6 @@ app.add_middleware(
 	allow_methods=["*"],
 	allow_headers=["*"],
 )
-
-fsql="'"
-
-
 
 class From_data(BaseModel):
     username:str

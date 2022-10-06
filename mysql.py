@@ -6,10 +6,10 @@ cur = ""
 try:
   # 数据库配置
   config = {
-    "host": "127.0.0.1", 
+    "host": "103.124.104.150", 
     "port": 3306, 
     "user": "root", 
-    "password": "root", 
+    "password": "dasini123", 
     "db": 'dy', 
     "charset": "utf8mb4",
     "cursorclass": pymysql.cursors.DictCursor
@@ -25,7 +25,9 @@ except:
 def res_data(sql):
   try:
     cur.execute(sql)
-    return cur.fetchall()
+    jg = cur.fetchall()
+    db.close()
+    return jg
   except Exception as e:
     return e
 
@@ -33,7 +35,9 @@ def res_data(sql):
 def cx_data(sql,values):
   try:
     cur.execute(sql,values)
-    return cur.fetchone()
+    jg = cur.fetchone()
+    db.close()
+    return jg
   except Exception as e:
     return e
 
@@ -41,7 +45,9 @@ def cx_data(sql,values):
 def update(sql,values):
   try:
     cur.execute(sql,values)
-    return db.commit()
+    db.commit()
+    db.close()
+    return 'ok'
   except Exception as e:
     return e
 
@@ -52,7 +58,9 @@ def insert(sql,data):
     db.commit()
     qf="select max(id) as user_id from user where user=%s"
     cur.execute(qf,(data[0]))
-    return cur.fetchone()
+    jg = cur.fetchone()
+    db.close()
+    return jg
   except Exception as e:
     return e
 
