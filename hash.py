@@ -53,9 +53,12 @@ def get_password_hash(password):
 
 
 def get_user(db, username):
-    if db != None and username == db['username']:
-        return UserInDB(**db)
-    else:
+    try:
+        if db['username'] and username == db['username']:
+            return UserInDB(**db)
+        else:
+            raise HTTPException(status_code=404, detail="nothing")
+    except Exception as e:
         raise HTTPException(status_code=404, detail="nothing")
 
 
