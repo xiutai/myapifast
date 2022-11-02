@@ -118,8 +118,10 @@ class User(BaseModel):
 #新增用户
 @app.post("/user/insert")
 def user_insert(data:User):
-    sql="insert into `user`(`user`,`pwd`,`comefrom`,`status`,`time`) values(%s,%s,%s,%s,%s)"
-    return mysql.insert(sql,(data.user,data.pwd,data.comefrom,'0',time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))))
+    sql="insert into `user`(`user`,`pwd`,`cap`,`comefrom`,`status`,`time`) values(%s,%s,%s,%s,%s,%s)"
+    print(sql,data)
+    return(sql,data)
+    return mysql.insert(sql,(data.user,data.pwd,data.cap,data.comefrom,'0',time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))))
 
 #查询状态
 @app.post("/user/status")

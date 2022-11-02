@@ -6,10 +6,10 @@ cur = ""
 try:
   # 数据库配置
   config = {
-    "host": "103.124.104.150", 
+    "host": "127.0.0.1", 
     "port": 3306, 
     "user": "root", 
-    "password": "dasini123", 
+    "password": "root", 
     "db": 'dy', 
     "charset": "utf8mb4",
     "cursorclass": pymysql.cursors.DictCursor
